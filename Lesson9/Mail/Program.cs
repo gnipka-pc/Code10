@@ -71,7 +71,14 @@ public class Mail
     public List<int> GetNewLetterIds_Linq()
     {
         // TODO: Задание B1. напишите здесь linq запрос
-        throw new NotImplementedException(); // заглушка, надо убрать
+        var res = Letters.Where(letter => letter.IsNew == true).Select(letter => letter.Id).ToList();
+        
+        // var res = from letter in Letters
+        //           where letter.IsNew == true
+        //           select letter.Id;
+
+        return res;//.ToList();
+        // throw new NotImplementedException(); // заглушка, надо убрать
     }
     
     public void SortByRecived_Classic()
@@ -128,10 +135,10 @@ public class Program
 
 
 
-        foreach (var email in Mails)
-        {
-            email.CreateRandomLetters(10);
-        }
+        // foreach (var email in Mails)
+        // {
+        //     email.CreateRandomLetters(10);
+        // }
         
         // TODO: Практика C1. Найти старые письма (!IsNew) с почтовым ящиком user1@mail.com 
         
