@@ -12,6 +12,14 @@ class Program
         string url = "https://jsonplaceholder.org/posts/1";
         string response = await client.GetStringAsync(url);
 
-        System.Console.WriteLine(response);
+        Dictionary<string, object> data = JsonSerializer.Deserialize<Dictionary<string, object>>(response);
+
+        foreach (var item in data)
+        {
+            System.Console.WriteLine($"{item.Key}: {item.Value}");
+        }
+        // System.Console.WriteLine(data["title"]);
+
+        // System.Console.WriteLine(response);
     }
 }
