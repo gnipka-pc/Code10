@@ -1,16 +1,21 @@
-﻿using Telegram.Bot;
+﻿using System.Threading.Tasks.Dataflow;
+using Telegram.Bot;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
+using Telegram.Bot.Types.ReplyMarkups;
 
 string[] hello = {"Привет", "привет", "hello", "Hello"};
 
 using var cts = new CancellationTokenSource();
 
-const string token = "7848789151:AAEhXDH_FoYjhffSemCiPfFkxBmPO4y6o38"; 
+const string token = "7969844039:AAGnyhjFx1sMhHK_RGJ1Jwc3iysGTQVCcAY"; 
 
-var bot = new TelegramBotClient(token, cancellationToken: cts.Token);
+var bot = new TelegramBotClient(token);
 var me = await bot.GetMe();
+System.Console.WriteLine(me.Username);
 bot.OnMessage += OnMessage;
+bot.OnMessage += OnCommand;
+bot.OnUpdate += OnUpdate;
 
 Console.WriteLine($"@{me.Username} is running... Press Enter to terminate");
 Console.ReadLine();
@@ -20,17 +25,30 @@ async Task OnMessage(Message msg, UpdateType type)
 {
     if (msg.Text is null) return;
     System.Console.WriteLine($"{type}: {msg.Text}\n{msg.Contact}");
-    bool hiFlag = false;
     foreach (var hi in hello)
     {
         if (msg.Text == hi)
         {
-            await bot.SendMessage(msg.Chat, "Привет!");
-            hiFlag = true;
+            await using var stream = File.OpenRead("images.jpg");
+            await bot.SendPhoto(msg.Chat, stream, "", replyMarkup: new InlineKeyboardButton[] { "Ok" });
         }
     }
-    if (!hiFlag)
+}
+
+async Task OnCommand(Message msg, UpdateType type)
+{
+    if (msg.Text is null) return;
+    if (msg.Text == "/start")
     {
-        await bot.SendMessage(msg.Chat, msg.Text);
+        await bot.SendMessage(msg.Chat, "Привет! Я бот, который умеет переводить текст!");
+    }
+}
+
+async Task OnUpdate(Update update)
+{
+    if (update is { CallbackQuery: { } query }) // non-null CallbackQuery
+    {
+        await bot.AnswerCallbackQuery(query.Id, $"You picked {query.Data}");
+        await bot.SendMessage(query.Message!.Chat, $"User {query.From} clicked on {query.Data}");
     }
 }
