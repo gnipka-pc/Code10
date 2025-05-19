@@ -28,13 +28,16 @@ public class AccountController : ControllerBase
     {
         Console.WriteLine("Registering account: " + account.Name); 
         _accountManager.RegisterAccount(account);
-         
-        Responce resp = new Responce();
 
-        resp.user = account;
-        resp.IsAutorized = _accountManager.VerifyAccount(account);
+        bool isVerified = _accountManager.VerifyAccount(account);
+        
+        // Создаем объект для ответа, который содержит информацию о пользователе и его статусе верификации
+        var response = new {
+            User = account,
+            IsVerified = isVerified
+        };
 
-        return Ok(account); 
+        return Ok(response);
     }   
 
     [HttpPost("api/account/verify")]    

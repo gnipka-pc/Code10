@@ -19,4 +19,10 @@ public class Responce
 {
     public User user = new User("1");
     public bool IsAutorized;
+
+    public Responce(User _user, bool _IsAutorized)
+    {
+        user = _user;
+        IsAutorized = _IsAutorized;
+    }
 }
